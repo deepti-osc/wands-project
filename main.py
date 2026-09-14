@@ -8,6 +8,13 @@ client = OpenSearch(hosts=[{"host": "localhost", "port": 9200}])
 def search(q: str):
     response = client.search(
         index="wands-products",
-        body={"query": {"match": {"product_name": q}}}
+        body={
+            "query": {
+                "multi_match": {
+                    "query": q,
+                    "fields": ["product_name^3", "product_description"]
+                }
+            }
+        }
     )
     return [hit["_source"] for hit in response["hits"]["hits"]]
